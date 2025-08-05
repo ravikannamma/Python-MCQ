@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>C Programming Quiz</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #eef;
+      padding: 20px;
+    }
+
+    #quiz-box {
+      max-width: 700px;
+      background: #fff;
+      padding: 20px;
+      margin: auto;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      color: #333;
+    }
+
+    .options {
+      margin-top: 10px;
+    }
+
+    .options label {
+      display: block;
+      padding: 10px;
+      margin: 5px 0;
+      background: #f9f9f9;
+      border-radius: 5px;
+      cursor: pointer;
+      border: 1px solid #ccc;
+    }
+
+    .buttons {
+      margin-top: 20px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .buttons button {
+      padding: 10px 20px;
+      font-weight: bold;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    #result {
+      margin-top: 20px;
+      font-size: 1.2em;
+      font-weight: bold;
+      color: green;
+    }
+
+    table {
+      margin-top: 20px;
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    th, td {
+      border: 1px solid #aaa;
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background: #f0f0f0;
+    }
+
+    .correct {
+      color: green;
+    }
+
+    .wrong {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+
+<div id="quiz-box">
+  <h2 id="question">Question text will go here</h2>
+  <div class="options" id="options"></div>
+
+  <div class="buttons">
+    <button onclick="prevQuestion()">Previous</button>
+    <button onclick="nextQuestion()">Next</button>
+  </div>
+
+  <div id="result"></div>
+  <div id="summary"></div>
+</div>
+
+<script>
+  const quizData = [
+    {
+      question: "1. Which of the following is a valid C variable name?",
+      options: ["int", "float", "_var", "1var"],
+      answer: "_var"
+    },
+    {
+      question: "2. What is the size of int in C?",
+      options: ["2 bytes", "4 bytes", "8 bytes", "Depends on compiler"],
+      answer: "Depends on compiler"
+    },
+    {
+      question: "3. Which function is used to print in C?",
+      options: ["cin", "print()", "printf()", "println()"],
+      answer: "printf()"
+    },
+    {
+      question: "4. Which header file is used for input/output functions?",
+      options: ["conio.h", "stdio.h", "math.h", "string.h"],
+      answer: "stdio.h"
+    },
+    {
+      question: "5. What is the value of 5/2 in C?",
+      options: ["2", "2.5", "3", "2.0"],
+      answer: "2"
+    },
+    {
+      question: "6. Which symbol is used for a pointer?",
+      options: ["&", "*", "%", "#"],
+      answer: "*"
+    },
+    {
+      question: "7. What is the use of 'break' in C?",
+      options: ["Exit program", "Exit loop", "Continue loop", "End function"],
+      answer: "Exit loop"
+    },
+    {
+      question: "8. Which of the following is a loop in C?",
+      options: ["for", "if", "goto", "define"],
+      answer: "for"
+    },
+    {
+      question: "9. What is the correct syntax to declare a function?",
+      options: ["function int()", "int function()", "void = function", "func -> int()"],
+      answer: "int function()"
+    },
+    {
+      question: "10. Which keyword is used to define a constant?",
+      options: ["const", "define", "fixed", "static"],
+      answer: "const"
+    }
+  ];
+
+  let currentQuestion = 0;
+  const userAnswers = new Array(quizData.length).fill(null);
+
+  function loadQuestion() {
+    const q = quizData[currentQuestion];
+    document.getElementById("question").innerText = q.question;
+
+    const optionsDiv = document.getElementById("options");
+    optionsDiv.innerHTML = "";
+
+    q.options.forEach(option => {
+      const label = document.createElement("label");
+      const radio = document.createElement("input");
+      radio.type = "radio";
+      radio.name = "option";
+      radio.value = option;
+
+      if (userAnswers[currentQuestion] === option) {
+        radio.checked = true;
+      }
+
+      label.appendChild(radio);
+      label.appendChild(document.createTextNode(" " + option));
+      optionsDiv.appendChild(label);
+    });
+
+    document.getElementById("result").innerText = "";
+    document.getElementById("summary").innerHTML = "";
+  }
+
+  function saveAnswer() {
+    const selected = document.querySelector('input[name="option"]:checked');
+    if (selected) {
+      userAnswers[currentQuestion] = selected.value;
+    }
+  }
+
+  function nextQuestion() {
+    saveAnswer();
+    if (currentQuestion < quizData.length - 1) {
+      currentQuestion++;
+      loadQuestion();
+    } else {
+      submitQuiz();
+    }
+  }
+
+  function prevQuestion() {
+    saveAnswer();
+    if (currentQuestion > 0) {
+      currentQuestion--;
+      loadQuestion();
+    }
+  }
+
+  function submitQuiz() {
+    saveAnswer();
+    let score = 0;
+    let summaryHTML = `
+      <h3>📋 Answer Summary</h3>
+      <table>
+        <tr>
+          <th>Q.No</th>
+          <th>Question</th>
+          <th>Your Answer</th>
+          <th>Correct Answer</th>
+          <th>Status</th>
+        </tr>
+    `;
+
+    quizData.forEach((q, index) => {
+      const userAns = userAnswers[index] || "Not Answered";
+      const isCorrect = userAns === q.answer;
+      if (isCorrect) score++;
+
+      summaryHTML += `
+        <tr>
+          <td>${index + 1}</td>
+          <td>${q.question}</td>
+          <td class="${isCorrect ? 'correct' : 'wrong'}">${userAns}</td>
+          <td>${q.answer}</td>
+          <td>${isCorrect ? '✅' : '❌'}</td>
+        </tr>
+      `;
+    });
+
+    summaryHTML += `</table>`;
+
+    document.getElementById("result").innerText = `🎉 You scored ${score} out of ${quizData.length}`;
+    document.getElementById("summary").innerHTML = summaryHTML;
+  }
+
+  // Load first question initially
+  loadQuestion();
+</script>
+
+</body>
+</html>
