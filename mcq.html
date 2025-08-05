@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Python MCQ Chatbot</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .chat-container {
+      background-color: #fff;
+      width: 400px;
+      height: 600px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .chat-box {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+    }
+    .chat-message {
+      margin-bottom: 15px;
+    }
+    .bot {
+      color: #2c7;
+    }
+    .user {
+      color: #07f;
+      text-align: right;
+    }
+    .input-container {
+      padding: 10px;
+      display: flex;
+      border-top: 1px solid #ccc;
+    }
+    input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      margin-right: 10px;
+    }
+    button {
+      padding: 10px 15px;
+      background-color: #07f;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div class="chat-container">
+    <div id="chat-box" class="chat-box"></div>
+    <div class="input-container">
+      <input type="text" id="user-input" placeholder="Type A, B, C or D...">
+      <button onclick="submitAnswer()">Send</button>
+    </div>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        q: "Q1. What is the correct file extension for Python files?\nA. .pyth\nB. .pt\nC. .py\nD. .pyt",
+        a: "C"
+      },
+      {
+        q: "Q2. Which function is used to display output in Python?\nA. show()\nB. display()\nC. echo()\nD. print()",
+        a: "D"
+      },
+      {
+        q: "Q3. Which of the following is a correct variable name in Python?\nA. 2num\nB. num_1\nC. num-1\nD. num one",
+        a: "B"
+      },
+      {
+        q: "Q4. What will 3 + 2 * 2 return in Python?\nA. 10\nB. 7\nC. 9\nD. 12",
+        a: "B"
+      },
+      {
+        q: "Q5. Which symbol is used for single-line comments in Python?\nA. //\nB. --\nC. #\nD. /*",
+        a: "C"
+      },
+      {
+        q: "Q6. What is the output of print(type(10))?\nA. <class 'str'>\nB. <class 'float'>\nC. <class 'int'>\nD. <class 'bool'>",
+        a: "C"
+      },
+      {
+        q: "Q7. What does len(\"Hello\") return?\nA. 4\nB. 5\nC. 6\nD. Error",
+        a: "B"
+      },
+      {
+        q: "Q8. What is the result of 10 // 3 in Python?\nA. 3.33\nB. 3\nC. 4\nD. 3.0",
+        a: "B"
+      },
+      {
+        q: "Q9. Which of the following is a loop structure in Python?\nA. for\nB. do\nC. repeat\nD. when",
+        a: "A"
+      },
+      {
+        q: "Q10. What keyword is used to define a function in Python?\nA. func\nB. function\nC. define\nD. def",
+        a: "D"
+      }
+    ];
+
+    let current = 0;
+    const chatBox = document.getElementById("chat-box");
+
+    function showMessage(message, sender) {
+      const msg = document.createElement("div");
+      msg.className = `chat-message ${sender}`;
+      msg.textContent = message;
+      chatBox.appendChild(msg);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function showQuestion() {
+      if (current < questions.length) {
+        showMessage(questions[current].q, "bot");
+      } else {
+        showMessage("✅ You've completed the quiz! Well done!", "bot");
+      }
+    }
+
+    function submitAnswer() {
+      const input = document.getElementById("user-input");
+      const userAns = input.value.trim().toUpperCase();
+      if (!userAns || !['A', 'B', 'C', 'D'].includes(userAns)) return;
+      showMessage(userAns, "user");
+
+      const correctAns = questions[current].a;
+      if (userAns === correctAns) {
+        showMessage("✅ Correct!", "bot");
+      } else {
+        showMessage(`❌ Incorrect. Correct answer is ${correctAns}.`, "bot");
+      }
+      current++;
+      input.value = "";
+      setTimeout(showQuestion, 1000);
+    }
+
+    // Start quiz
+    showQuestion();
+  </script>
+</body>
+</html>
