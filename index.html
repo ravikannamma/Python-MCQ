@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Python Data Structures MCQ Quiz</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .quiz-container {
+      background: rgba(255, 255, 255, 0.95);
+      max-width: 900px;
+      width: 92%;
+      padding: 32px;
+      border-radius: 24px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+      animation: fadeIn 0.8s ease;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 10px;
+      background: linear-gradient(to right, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-size: 2.2rem;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      padding: 10px 16px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, #eef2ff, #f5f3ff);
+      font-weight: 600;
+    }
+
+    .timer {
+      color: #c0392b;
+    }
+
+    .score {
+      color: #2c7be5;
+    }
+
+    .question-number {
+      font-weight: 600;
+      color: #555;
+      margin-bottom: 8px;
+    }
+
+    .question-text {
+      font-size: 1.15rem;
+      margin-bottom: 18px;
+      white-space: pre-wrap;
+    }
+
+    .options {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .option {
+      background: linear-gradient(135deg, #fdfbfb, #ebedee);
+      padding: 14px 18px;
+      border-radius: 14px;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: all 0.25s ease;
+    }
+
+    .option:hover {
+      transform: translateY(-2px);
+      border-color: #667eea;
+    }
+
+    .option.selected {
+      background: linear-gradient(135deg, #d4fc79, #96e6a1);
+      border-color: #2ecc71;
+    }
+
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 22px;
+    }
+
+    button {
+      border: none;
+      padding: 12px 26px;
+      border-radius: 999px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.2);
+    }
+
+    button:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    button:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.25);
+    }
+
+    .summary {
+      display: none;
+    }
+
+    .summary table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      font-size: 0.9rem;
+    }
+
+    .summary th, .summary td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: left;
+    }
+
+    .summary th {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+    }
+
+    .correct { color: green; font-weight: 600; }
+    .wrong { color: crimson; font-weight: 600; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="quiz-container">
+    <h1>Python MCQ – Lists, Tuples, Sets & Dicts</h1>
+
+    <div class="top-bar">
+      <div class="timer">⏳ Time Left: <span id="time">10:00</span></div>
+      <div class="score">Score: <span id="score">0</span></div>
+    </div>
+
+    <div class="quiz">
+      <div class="question-number" id="qNumber"></div>
+      <div class="question-text" id="qText"></div>
+      <div class="options" id="options"></div>
+
+      <div class="nav-buttons">
+        <button id="prevBtn">Previous</button>
+        <button id="nextBtn">Next</button>
+      </div>
+    </div>
+
+    <div class="summary" id="summary"></div>
+  </div>
+
+  <script>
+    const ORIGINAL_QUESTIONS = [
+      { q: `What is the output?\n\na = [1, 2, 3]\nb = a\na.append(4)\nprint(b)`, options: ["[1, 2, 3]", "[4]", "[1, 2, 3, 4]", "Error"], correct: 2 },
+      { q: `What happens?\n\nx = [1, 2, 3]\ny = x.copy()\nx[0] = 99\nprint(y)`, options: ["[99, 2, 3]", "[1, 2, 3]", "[]", "Error"], correct: 1 },
+      { q: "Which operation is fastest for membership testing in a list of 1 million elements?", options: ["x in lst", "lst.index(x)", "convert to set then check", "binary search"], correct: 2 },
+      { q: `What is printed?\n\nlst = [[1,2],[3,4]]\nlst2 = lst[:]\nlst[0][0] = 9\nprint(lst2)`, options: ["[[1,2],[3,4]]", "[[9,2],[3,4]]", "Error", "None"], correct: 1 },
+      { q: "Which is TRUE about list resizing?", options: ["Lists allocate exact memory", "Lists over-allocate for append efficiency", "Append is always O(n)", "Insert at end is slow"], correct: 1 },
+      { q: "Which creates a tuple?", options: ["(5)", "(5,)", "[5]", "{5}"], correct: 1 },
+      { q: `Output?\n\nt = (1,[2,3])\nt[1].append(4)\nprint(t)`, options: ["Error", "(1,[2,3])", "(1,[2,3,4])", "None"], correct: 2 },
+      { q: "Why can tuples be dictionary keys?", options: ["Ordered", "Immutable", "Indexed", "Faster"], correct: 1 },
+      { q: `What happens?\n\nt = (1,2,3)\nt += (4,)\nprint(t)`, options: ["Error", "(1,2,3)", "(1,2,3,4)", "None"], correct: 2 },
+      { q: "Which consumes LESS memory for same elements?", options: ["List", "Tuple", "Set", "Dict"], correct: 1 },
+      { q: `What is output?\n\ns = {1,2,3}\ns.add(2)\nprint(len(s))`, options: ["4", "3", "2", "Error"], correct: 1 },
+      { q: "Which CANNOT be in a set?", options: ["5", "hi", "(1,2)", "[1,2]"], correct: 3 },
+      { q: `What is printed?\n\ns = {1,2,3}\nprint(s.pop())`, options: ["always 1", "random element", "largest", "smallest"], correct: 1 },
+      { q: "Time complexity of x in set?", options: ["O(n)", "O(log n)", "O(1) avg", "O(n²)"], correct: 2 },
+      { q: `What is printed?\n\na = {1,2,3}\nb = {3,4}\nprint(a & b)`, options: ["{1,2,3,4}", "{3}", "{}", "Error"], correct: 1 },
+      { q: `Output?\n\nd = {'a':1,'b':2}\nd['c'] = 3\nprint(d)`, options: ["unordered", "insertion order preserved", "sorted", "random"], correct: 1 },
+      { q: `What is output?\n\nd = {1:'a', True:'b'}\nprint(d)`, options: ["{1:'a',True:'b'}", "{1:'b'}", "error", "{}"], correct: 1 },
+      { q: "Which key is INVALID?", options: ["5", "hi", "(1,2)", "[1,2]"], correct: 3 },
+      { q: `Output?\n\nd = {x:x*x for x in range(3)}\nprint(d[2])`, options: ["2", "4", "9", "error"], correct: 1 },
+      { q: `What happens?\n\nd = {}\nd[[1,2]] = 5`, options: ["works", "TypeError", "KeyError", "None"], correct: 1 }
+    ];
+
+    // ---- Shuffle Questions ----
+    function shuffle(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    const questions = shuffle([...ORIGINAL_QUESTIONS]);
+
+    let current = 0;
+    const answers = Array(questions.length).fill(null);
+
+    const qNumber = document.getElementById('qNumber');
+    const qText = document.getElementById('qText');
+    const optionsDiv = document.getElementById('options');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const summaryDiv = document.getElementById('summary');
+    const scoreSpan = document.getElementById('score');
+
+    // ---- Timer (10 minutes) ----
+    let totalSeconds = 600;
+    const timeSpan = document.getElementById('time');
+
+    const timerInterval = setInterval(() => {
+      const min = String(Math.floor(totalSeconds / 60)).padStart(2, '0');
+      const sec = String(totalSeconds % 60).padStart(2, '0');
+      timeSpan.textContent = `${min}:${sec}`;
+
+      if (totalSeconds <= 0) {
+        clearInterval(timerInterval);
+        showSummary();
+      }
+      totalSeconds--;
+    }, 1000);
+
+    function renderQuestion() {
+      const q = questions[current];
+      qNumber.textContent = `Question ${current + 1} of ${questions.length}`;
+      qText.textContent = q.q;
+
+      optionsDiv.innerHTML = '';
+      q.options.forEach((opt, idx) => {
+        const div = document.createElement('div');
+        div.className = 'option';
+        if (answers[current] === idx) div.classList.add('selected');
+        div.textContent = opt;
+        div.onclick = () => {
+          answers[current] = idx;
+          renderQuestion();
+        };
+        optionsDiv.appendChild(div);
+      });
+
+      prevBtn.disabled = current === 0;
+      nextBtn.textContent = current === questions.length - 1 ? 'Finish' : 'Next';
+    }
+
+    prevBtn.onclick = () => {
+      if (current > 0) {
+        current--;
+        renderQuestion();
+      }
+    };
+
+    nextBtn.onclick = () => {
+      if (current < questions.length - 1) {
+        current++;
+        renderQuestion();
+      } else {
+        showSummary();
+      }
+    };
+
+    function calculateScore() {
+      let score = 0;
+      questions.forEach((q, i) => {
+        if (answers[i] === q.correct) score++;
+      });
+      return score;
+    }
+
+    function showSummary() {
+      clearInterval(timerInterval);
+      document.querySelector('.quiz').style.display = 'none';
+
+      const finalScore = calculateScore();
+      scoreSpan.textContent = finalScore;
+
+      summaryDiv.style.display = 'block';
+
+      let html = `<h2>Final Score: ${finalScore} / ${questions.length}</h2>`;
+      html += '<table><tr><th>#</th><th>Question</th><th>Your Answer</th><th>Correct Answer</th></tr>';
+
+      questions.forEach((q, i) => {
+        const your = answers[i] !== null ? q.options[answers[i]] : 'Not Answered';
+        const correct = q.options[q.correct];
+        const cls = answers[i] === q.correct ? 'correct' : 'wrong';
+
+        html += `<tr>
+          <td>${i + 1}</td>
+          <td>${q.q}</td>
+          <td class="${cls}">${your}</td>
+          <td class="correct">${correct}</td>
+        </tr>`;
+      });
+
+      html += '</table>';
+      summaryDiv.innerHTML = html;
+    }
+
+    renderQuestion();
+  </script>
+</body>
+</html>
